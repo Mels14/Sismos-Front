@@ -1,10 +1,14 @@
 // Estado de atención del evento sísmico
-export enum StatusSismo {
-  PENDIENTE = 'PENDIENTE',
-  EN_PROCESO = 'EN_PROCESO',
-  CONFIRMADO = 'CONFIRMADO',
-  RECHAZADO = 'RECHAZADO',
-}
+// Plain object + union type instead of `enum`, so the file only uses
+// type syntax that can be erased (works with erasableSyntaxOnly /
+// verbatimModuleSyntax, the defaults of recent TypeScript + Vite).
+// Values must match the backend exactly (src/Models/Sismo.py).
+export const StatusSismo = {
+  PENDIENTE: 'Pendiente',
+  REVISADO: 'Revisado',
+} as const;
+
+export type StatusSismo = (typeof StatusSismo)[keyof typeof StatusSismo];
 
 // Interfaz principal para el Evento Sísmico
 export interface SeismicEvent {
@@ -28,4 +32,8 @@ export interface SeismicEvent {
 
   /** Estado del evento */
   status?: StatusSismo;
+
+  /** Derived by the backend: priority P and key K = (P, M, I) */
+  prioridad?: 1 | 2 | 3;
+  clave?: [number, number, number];
 }
